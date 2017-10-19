@@ -1,0 +1,318 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head  th:replace="fragments/header :: common_header(~{::title},~{::link})">
+    <title>Phone4Pay — Invoice accept</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/styles.css}" />
+</head>
+
+<body>
+<div class="wrapper">
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-md-offset-4">
+                    <div class="card">
+                        <form id="InvoiceAccept" action="" method="">
+
+                            <input type="hidden" th:name="token" th:value="${token}" />
+                            <div class="card-header card-header-icon" data-background-color="blue">
+                                <i class="material-icons">person</i>
+
+                            </div>
+
+                            <div class="card-content">
+
+                                <h4 class="card-title"><span th:text="${receiver}" />
+                                    <p class="category" th:text="#{invoice.header.msg}" /></h4>
+
+                                <div class="alert alert-info alert-with-icon" style="margin-top: 10px;margin-bottom: 10px;" th:if="${txtMsg != null}">
+                                    <i class="material-icons" data-notify="icon" >mail_outline</i>
+                                    <span data-notify="message" id="mgs" th:text="${txtMsg}" />
+                                </div>
+
+                                <div class="card" >
+                                    <div class="card-content">
+                                        <div class="form-group label-floating">
+                                            <label class="control-label">
+                                                <smal th:text="#{invoice.label.card}" />
+                                            </label>
+                                            <input class="form-control"
+                                                   id="pan"
+                                                   name="pan"
+                                            />
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-xs-6">
+
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label" th:text="#{invoice.label.expdate}" />
+                                                    <input class="form-control text-center"
+                                                           name="expDate"
+                                                           id="expDate"
+                                                    />
+                                                </div>
+
+                                            </div>
+
+                                            <div class="col-xs-4 col-xs-offset-2">
+
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">
+                                                        cvc/cvv
+                                                    </label>
+                                                    <input class="form-control text-center"
+                                                           name="cvv"
+                                                           id="cvv"
+                                                    />
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="stats">
+                                            <i class="fa fa-cc-visa fa-2x" aria-hidden="true"></i>
+                                            <i class="fa fa-cc-mastercard fa-2x" aria-hidden="true"></i>
+                                            <i class="icon-cc-mir" aria-hidden="true" style="font-size: 2.58em; vertical-align:middle;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <br/>
+
+                                <div class="category form-category">
+
+                                    <div class="row">
+                                        <div class="col-xs-4"><b th:text="#{invoice.sum}" /></div>
+                                        <div class="col-xs-3">.............................</div>
+                                        <div class="col-xs-5 text-right"><b th:text="${#numbers.formatDecimal(sum, 1, 2,'POINT')}"/>
+                                            <span class="fa fa-rub" aria-hidden="true">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4"><b th:text="#{invoice.fee}" /></div>
+                                        <div class="col-xs-3">............................</div>
+                                        <div class="col-xs-5 text-right" id="fee"><span th:text="${#numbers.formatDecimal(fee, 1, 2,'POINT')}" />
+                                            <span class="fa fa-rub" aria-hidden="true">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4"><b th:text="#{invoice.amount}" /></div>
+                                        <div class="col-xs-3">.............................</div>
+                                        <div class="col-xs-5 text-right" id="amount"><span th:text="${#numbers.formatDecimal(amount, 1, 2,'POINT')}"/>
+                                            <span class="fa fa-rub" aria-hidden="true">&nbsp;</span>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="checkbox pull-left">
+                                        <label>
+                                            <input type="checkbox" name="agree" id="agree" >
+                                            <small><a href="https://phone4pay.ru/oferta" th:text="#{invoice.agreement}" /></small>
+                                        </label>
+                                    </div>
+                                    <br/>
+                                </div>
+
+                                <div class="form-footer text-right">
+
+                                    <button type="button" class="btn btn-info btn-sm" id="cancel" th:text="#{invoice.button.cancel}" />
+                                <span class="toggleButton">
+                                    <button type="submit" class="btn btn-info btn-sm" id="feeReq" th:text="#{invoice.button.fee}" />
+                                    <button type="submit" class="btn btn-info btn-sm hidden" id="payConfirm" th:text="#{invoice.button.pay}" />
+                                </span>
+
+                                </div>
+
+                                <br/>
+                                <p class="copyright pull-left">
+                                    &copy;
+                                    <script>
+                                        document.write(new Date().getFullYear())
+                                    </script>
+                                    <a href="https://phone4pay.ru">Phone4pay</a>
+                                </p>
+
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:replace="fragments/footer :: script"></div>
+</body>
+
+<script>
+
+    function setFormValidation(id){
+        $(id).validate({
+            rules: {
+                pan: {
+                    required: true,
+                    creditcard: true,
+                    minlength: 19
+                },
+                cvv:{
+                    required: true,
+                    minlength: 3
+                },
+                expDate: {
+                    required: true,
+                    minlength: 5,
+                    dataOld: true
+                },
+                agree:{
+                    required: true,
+                    agreeCheck: true
+                }
+            },
+            errorPlacement: function(error, element) {
+                $(element).parent('div').addClass('has-error');
+
+                if($(element).is(':checkbox')){
+                    if ($(element).prop('checked') == true){
+                        $(element).closest( "div").removeClass('has-error');
+                    } else {
+                        $(element).closest( "div").addClass('has-error');
+                    }
+                }
+            },
+            submitHandler: function() {
+                switch(this.id) {
+                    case 'feeReq':
+                        console.log('===');
+                        break;
+
+                    default:  // payConfirm
+                        break;
+                }
+            }
+        });
+    }
+
+    setFormValidation('#InvoiceAccept');
+
+    $("#pan").mask('M000-0000-0000-0000',{
+        translation: {
+            'M': {
+                pattern: /[2,4,5]/, optional: false
+            }
+        }
+    });
+
+    $("#cvv").mask('000');
+
+    $("#expDate").mask('M0/Y0',{
+        translation: {
+            'M': {
+                pattern: /[0,1]/, optional: false
+            },
+            'm': {
+                pattern: /[1-9]/, optional: false
+            },
+            's': {
+                pattern: /[0,1,2]/, optional: false
+            },
+            'Y':{
+                pattern: /[1-2]/, optional: false
+            }
+        },
+        onKeyPress: function(cep, e, field, options) {
+            var mask = 'Mm/Y0';
+            if (cep == 1 || cep >9){
+                mask = 'Ms/Y0';
+            }
+            $('#expDate').mask(mask, options);
+        }
+    });
+
+    $("#cancel").click(function(){
+        // tmp
+        //toggleSubmitButton("span.toggleButton");
+        console.log(' ----->  '+getFormData('#InvoiceAccept'));
+
+    });
+
+    <!--  -->
+    function toggleSubmitButton(span){
+        $(span).find('button').each(function( index ) {
+            if ($( this ).hasClass("hidden")){
+                $( this ).removeClass("hidden");
+            } else {
+                $( this ).addClass("hidden");
+            }
+        });
+    }
+
+    <!-- Validate if entered date in the past -->
+    function expDateValidate(cep){
+        var now = new Date();
+        var year = now.getUTCFullYear();
+        var month = ("0" +(now.getUTCMonth() + 1)).slice(-2);
+        var entered = cep.replace(/(\d{2})\/(\d{2})/,'20$2$1');
+        return (entered >=(year+""+month));
+    }
+
+    $.validator.addMethod( "dataOld", function( value, element) {
+        if ( this.optional( element ) ) {
+            return true;
+        }
+        return expDateValidate(value);
+    }, "Invalid data is old." );
+
+    $.validator.addMethod( "agreeCheck", function( value, element) {
+        if (element.checked){
+            $(element).closest( "div").removeClass('has-error');
+            return true;
+        }
+        return false;
+    }, "Please accept our policy." );
+
+    <!-- Get form value as JSON -->
+    function getFormData(fomName){
+        var paramObj = {};
+        $.each($(fomName).serializeArray(), function(_, kv) {
+            if (paramObj.hasOwnProperty(kv.name)) {
+                paramObj[kv.name] = $.makeArray(paramObj[kv.name]);
+                paramObj[kv.name].push(kv.value.replace(/[/-]/g,''));
+            }
+            else {
+                paramObj[kv.name] = kv.value.replace(/[/-]/g,'');
+            }
+        });
+        return JSON.stringify(paramObj);
+    }
+
+    function ajaxReq ($url, $parameters){
+        $.ajax({
+            url: $url,
+            type: 'POST',
+            data: $parameters, //JSON.stringify($parameters)
+            contentType:"application/json; charset=utf-8",
+            async: false,
+            dataType: 'json',
+            crossDomain:true,
+            beforeSend: function (xhr) {
+                //xhr.setRequestHeader("Accept", "application/json");
+                //xhr.setRequestHeader("Content-Type", "application/json");
+                //xhr.setRequestHeader("Authorization", "Bearer XXXX");
+                xhr.setRequestHeader ("Authorization",make_base_auth('client3','secret') );
+            },
+            statusCode: {
+                200: function(response) {
+                    return true;
+                },
+                401: function() {
+                    return false;
+                }
+            },
+            error: function(){alert(' Server request error.');}
+        });
+    }
+
+</script>
+</html>
